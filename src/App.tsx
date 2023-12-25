@@ -81,8 +81,8 @@ function App() {
                 {error && <p className="text-red-500">{error}</p>}
             </div>
 
-            <div className="text-xl">
-                Imię: <span className="font-bold text-blue-600">{userName}</span>
+            <div>
+                <span className="text-xl font-bold text-blue-600">{userName}</span>
             </div>
         </div>
     );
