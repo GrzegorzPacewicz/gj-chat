@@ -1,10 +1,8 @@
-import './App.css'
-
 function App() {
 
   return (
     <>
-    <h1 className="text-3xl">hello!</h1>
+      <h1 className="text-2xl font-bold text-amber-500">hello!</h1>
     </>
   )
 }
