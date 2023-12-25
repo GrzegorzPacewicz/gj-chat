@@ -1,34 +1,60 @@
-import
-
-
-{ useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
-    const [inputValue, setInputValue] = useState('');
-    const [error, setError] = useState('');
-    const [userName, setUserName] = useState('')
+    const [inputValue, setInputValue] = useState("");
+    const [userName, setUserName] = useState("");
+    const [error, setError] = useState("");
 
     const trimName = (name) => name.trim();
 
-        function handleSubmit(event) {
-        event.preventDefault();
+    const handleConnect = () => {
+        try {
+            const trimmedName = trimName(inputValue);
 
-        const trimmedName = trimName(inputValue);
+            if (trimmedName.length < 3) {
+                setError("Imię musi mieć przynajmniej 3 znaki.");
+                return;
+            }
 
-        if (trimmedName.length < 3) {
-            setError('Imię musi mieć przynajmniej 3 znaki.');
-            return;
+            setError("");
+            setUserName(trimmedName);
+        } catch (error) {
+            console.error("Error during WebSocket connection: ", error);
         }
+    };
 
-        setError('');
-        setUserName((trimmedName));
-        setInputValue('')
+    useEffect(() => {
+        if (!userName) return;
 
-        console.log('Imię (przycięte):', trimmedName);
-    }
+        const ws = new WebSocket(
+            "wss://gjwebsocketserver.azurewebsites.net/ws?name=" + userName
+        );
 
-    // const isSubmitDisabled = inputValue.trim().length === 0;
+        ws.onmessage = (e) => {
+            console.log(e.data);
+        };
 
+        ws.onerror = (error) => {
+            console.error("WebSocket Error: ", error);
+        };
+
+        ws.onclose = () => {
+            console.log("WebSocket connection closed");
+            // Additional cleanup or handling logic if needed
+        };
+
+        // Cleanup function for useEffect
+        return () => {
+            if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+                ws.close();
+            }
+        };
+    }, [userName]);
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        handleConnect();
+    };
 
     return (
         <div className="p-1 mt-20 w-full">
@@ -41,24 +67,23 @@ function App() {
                     placeholder="Wpisz swoje imię"
                     onChange={(event) => {
                         setInputValue(event.target.value);
-                        setError('');
+                        setError("");
                     }}
                 />
                 <button
                     className="text-xl border-[1px] border-blue-600 rounded p-2 border-solid hover:text-white hover:bg-blue-600 transform-all duration-300 $"
                     type="submit"
-                    // disabled={isSubmitDisabled}
-                    >
-                   Połącz
+                >
+                    Połącz
                 </button>
             </form>
             <div className="h-10 py-2">
-
                 {error && <p className="text-red-500">{error}</p>}
-
             </div>
 
-            <div className="text-xl">Name: <span className="font-bold text-blue-600">{userName}</span></div>
+            <div className="text-xl">
+                Imię: <span className="font-bold text-blue-600">{userName}</span>
+            </div>
         </div>
     );
 }
