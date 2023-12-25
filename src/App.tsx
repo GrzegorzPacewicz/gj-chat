@@ -7,7 +7,7 @@ function App() {
 
     const trimName = (name) => name.trim();
 
-    function handleSubmit(event) {
+        function handleSubmit(event) {
         event.preventDefault();
 
         const trimmedName = trimName(inputValue);
@@ -24,6 +24,9 @@ function App() {
         console.log('Imię (przycięte):', trimmedName);
     }
 
+    // const isSubmitDisabled = inputValue.trim().length === 0;
+
+
     return (
         <div className="p-1">
             <form className="flex gap-3 my-2" onSubmit={handleSubmit}>
@@ -32,13 +35,19 @@ function App() {
                     value={inputValue}
                     autoFocus
                     type="text"
+                    placeholder="Wpisz swoje imię"
                     onChange={(event) => {
                         setInputValue(event.target.value);
                         setError('');
                     }}
                 />
-                <button className="text-xl border-[1px] border-blue-400 rounded p-2 border-solid" type="submit">
-                    Wyślij
+                <button
+                    className="text-xl border-[1px] border-blue-400 rounded p-2 border-solid"
+                    type="submit"
+                    // disabled={isSubmitDisabled}
+                    >
+
+                    Połącz
                 </button>
             </form>
             {error && <p className="text-red-500">{error}</p>}
