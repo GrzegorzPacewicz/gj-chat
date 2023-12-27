@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 
 function App() {
-    const [inputValue, setInputValue] = useState("");
+    const [inputUserValue, setInputUserValue] = useState("");
     const [userName, setUserName] = useState("");
     const [error, setError] = useState("");
+    const [messages, setMessages] = useState([])
+    const [ws, setWs] = useState(null)
+    const [inputMessageValue, setInputMessageValue] = useState("")
 
     const trimName = (name) => name.trim();
 
-    const handleConnect = () => {
+    const handleUserConnect = () => {
         try {
-            const trimmedName = trimName(inputValue);
+            const trimmedName = trimName(inputUserValue);
 
             if (trimmedName.length < 3) {
                 setError("Imię musi mieć przynajmniej 3 znaki.");
@@ -26,12 +29,13 @@ function App() {
     useEffect(() => {
         if (!userName) return;
 
-        const ws = new WebSocket(
-            "wss://gjwebsocketserver.azurewebsites.net/ws?name=" + userName
-        );
-
+    const ws =  new WebSocket(
+        "wss://gjwebsocketserver.azurewebsites.net/ws?name=" + userName
+    )
+        setWs(ws)
         ws.onmessage = (e) => {
             console.log(e.data);
+            setMessages(prev=>[...prev,e.data])
         };
 
         ws.onerror = (error) => {
@@ -53,21 +57,25 @@ function App() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        handleConnect();
+        handleUserConnect();
     };
 
+    const handleSendMessage=()=>{
+        ws.send(inputMessageValue)
+        setInputMessageValue("");
+    }
     return (
         <>
             <div className="p-1 mt-10 w-full">
                 <form className="flex gap-3 my-2" onSubmit={handleSubmit}>
                     <input
                         className="w-full text-xl border-[1px] border-blue-600 rounded p-2 border-solid"
-                        value={inputValue}
+                        value={inputUserValue}
                         autoFocus
                         type="text"
                         placeholder="Wpisz swoje imię"
                         onChange={(event) => {
-                            setInputValue(event.target.value);
+                            setInputUserValue(event.target.value);
                             setError("");
                         }}
                     />
@@ -85,17 +93,22 @@ function App() {
 
             {userName && <div className="flex w-full gap-3 h-screen flex justify-end flex-col">
 
-                <div className="flex">{userName} wiadomość</div>
-
+                {messages.map(message=>(
+                    <div key={message}>{message}</div>
+                    ))
+                }
                 <div className="flex items-center gap-3 mb-60">
                     <p className="text-xl font-bold text-blue-600">{userName}</p>
                     <input type="text"
+                           value={inputMessageValue}
                            className="w-full text-xl border-[1px] border-blue-600 rounded p-2 border-solid"
-                           onClick={() => {
-                           }} placeholder="wpisz coś"/>
+                           onChange={(event) => {setInputMessageValue(event.target.value)}}
+                           autoFocus
+                           placeholder="wpisz coś"/>
                     <button
                         className="text-xl border-[1px] border-blue-600 rounded p-2 border-solid hover:text-white hover:bg-blue-600 transform-all duration-300 $"
                         type="submit"
+                        onClick={handleSendMessage}
                     >Wyślij
                     </button>
                 </div>
