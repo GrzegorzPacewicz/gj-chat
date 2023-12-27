@@ -112,12 +112,16 @@ function App() {
                 </div>
             )}
 
-            {userName && (
-                <div className="flex w-full gap-3 h-screen flex justify-end flex-col">
-                    {messages.map((message, index) => (
-                        <div key={index}>{message}</div>
-                    ))}
-                    <div className="flex items-center gap-3 mb-60">
+            {userName ? (
+                <div className="flex justify-center w-full  items-center gap-3  flex-col ">
+
+                    <div className="h-[40-rem] w-full overflow-y-scroll flex justify-end flex-col">
+                        {messages.map((message, index) => (
+                            <div key={index}>{message}</div>
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-3">
                         <p className="text-xl font-bold text-blue-600">{userName}</p>
                         <input
                             type="text"
@@ -139,7 +143,7 @@ function App() {
                         </button>
                     </div>
                 </div>
-            )}
+            ) : null}
         </>
     );
 }
