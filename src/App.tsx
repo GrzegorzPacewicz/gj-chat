@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 
 function App() {
+
+    const [ws, setWs] = useState(null);
+
     const [inputUserValue, setInputUserValue] = useState("");
     const [userName, setUserName] = useState("");
     const [error, setError] = useState("");
+
     const [messages, setMessages] = useState([]);
-    const [ws, setWs] = useState(null);
-    const [inputMessageValue, setInputMessageValue] = useState("");
+        const [inputMessageValue, setInputMessageValue] = useState("");
 
     const trimName = (name) => name.trim();
 
@@ -85,7 +88,7 @@ function App() {
 
     return (
         <>
-            {!userName && (
+            {!userName ? (
                 <div className="p-1 mt-10 w-full">
                     <form className="flex gap-3 my-2" onSubmit={handleSubmit}>
                         <input
@@ -110,12 +113,12 @@ function App() {
                         {error && <p className="text-red-500">{error}</p>}
                     </div>
                 </div>
-            )}
+            ) : null}
 
             {userName ? (
                 <div className="flex justify-center w-full  items-center gap-3  flex-col ">
 
-                    <div className="h-[40-rem] w-full overflow-y-scroll flex justify-end flex-col">
+                    <div className="h-[40rem] flex justify-end flex-col overflow-y-scroll w-full">
                         {messages.map((message, index) => (
                             <div key={index}>{message}</div>
                         ))}
