@@ -54,7 +54,7 @@ function App() {
     };
 
     return (
-        <>
+        <div className="p-2">
             {!userName ? (
                 <User onUserConnect={handleUserConnect}/>
             ) : (
@@ -64,7 +64,7 @@ function App() {
                     messages={messages}
                 />
             )}
-        </>
+        </div>
     );
 }
 
